@@ -3,7 +3,6 @@
  */
 
 package com.Group2.CSC422.CSP;
-
 import java.util.*;
 
 public class warHandler {
@@ -24,9 +23,7 @@ public class warHandler {
             int num = rand.nextInt(5);
             switch (num) {
                 case 0:
-                    Player newbie = new Newbie();
-
-                    list.add(newbie);
+                    list.add(new Newbie());
                     break;
                 case 1:
                     list.add(new Soldier());
@@ -90,9 +87,9 @@ public class warHandler {
         private Player loser;
         private Player winner;
 
-        public WarRecord(Player loser, Player winner) {
-            this.loser = loser;
+        public WarRecord(Player winner, Player loser) {
             this.winner = winner;
+            this.loser = loser;
         }
 
         @Override
