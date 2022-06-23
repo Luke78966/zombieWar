@@ -1,95 +1,96 @@
 package com.Group2.CSC422.CSP; /**
  * warHandler.java
- *
- *
  */
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class warHandler {
     public ArrayList<Player> characterArray;
     public ArrayList<WarRecord> gameResultRecord = new ArrayList<>();
 
-    public warHandler(int amount){
+    public warHandler(int amount) {
         characterArray = randomGenerate(amount);
     }
 
-    public ArrayList randomGenerate(int amount){
+    public ArrayList randomGenerate(int amount) {
         // Randomly generate an arraylist of survivors and zombies
         ArrayList<Player> list = new ArrayList<>();
         Random rand = new Random();
-        for(int i = 0; i < amount; i++){
+        for (int i = 0; i < amount; i++) {
             int num = rand.nextInt(5);
-            switch(num){
-                case 0: list.add(new Newbie());
-                        break;
-                case 1: list.add(new Soldier());
-                        break;
-                case 2: list.add(new Mercenary());
-                        break;
-                case 3: list.add(new CommonInfect());
-                        break;
-                case 4: list.add(new Tank());
-                        break;
+            switch (num) {
+                case 0:
+                    list.add(new Newbie());
+                    break;
+                case 1:
+                    list.add(new Soldier());
+                    break;
+                case 2:
+                    list.add(new Mercenary());
+                    break;
+                case 3:
+                    list.add(new CommonInfect());
+                    break;
+                case 4:
+                    list.add(new Tank());
+                    break;
             }
         }
         return list;
     }
 
-    public int getNumZombies(){
+    public int getNumZombies() {
         // return number of zombies that are alive
         int count = 0;
-        for (Player player: characterArray){
-            if (player instanceof Zombie && player.alive){
+        for (Player player : characterArray) {
+            if (player instanceof Zombie && player.alive) {
                 count++;
             }
         }
         return count;
     }
 
-    public int getNumSurvivors(){
+    public int getNumSurvivors() {
         // return number of survivors that are alive
         int count = 0;
-        for (Player player: characterArray){
-            if (player instanceof Survivor && player.alive){
+        for (Player player : characterArray) {
+            if (player instanceof Survivor && player.alive) {
                 count++;
             }
         }
         return count;
     }
 
-    public void attack(Player attacker, Player defender){
+    public void attack(Player attacker, Player defender) {
         //Subtract attacking players damage from defending player's health. Set alive to false if health <= 0
-        if(attacker instanceof Zombie){
-        int damage = attacker.getDamage();
-        int health = defender.getHealth();
-        int result = health - damage;
-        if (result <= 0) {
-            gameResultRecord.add(new WarRecord(attacker, defender));
-        if (result <= 0) {
-            defender.die();
-        } else {
-            defender.setHealth(result);
-                }
+        if (attacker instanceof Zombie) {
+            int damage = attacker.getDamage();
+            int health = defender.getHealth();
+            int result = health - damage;
+
+            if (result <= 0) {
+                defender.die();
+                gameResultRecord.add(new WarRecord(attacker, defender));
+            } else {
+                defender.setHealth(result);
             }
-        }
-        else{
-            if(attacker instanceof Survivor){
-                if(((Survivor) attacker).getWeapon().hit()){
+        } else {
+            if (attacker instanceof Survivor) {
+                if (((Survivor) attacker).getWeapon().hit()) {
                     int damage = ((Survivor) attacker).getWeapon().getDamage();
                     int health = defender.getHealth();
                     int result = health - damage;
-                    if (result <= 0){
-                        gameResultRecord.add(new WarRecord(attacker, defender));
+                    if (result <= 0) {
                         defender.die();
-                    }else{
+                        gameResultRecord.add(new WarRecord(attacker, defender));
+                    } else {
                         defender.setHealth(result);
                     }
                 }
             }
         }
     }
-
 
 
     /**
@@ -118,7 +119,6 @@ public class warHandler {
 //            }
 //        }
 //    }
-
     public void survivorsFight() {
         //Make every survivor attack each zombie in arrayList
         int numPlayers = characterArray.size();
@@ -139,7 +139,7 @@ public class warHandler {
         for (int i = 0; i < numPlayers; i++) {
             if (characterArray.get(i) instanceof Zombie && characterArray.get(i).alive) {
                 for (int j = 0; j < numPlayers; j++) {
-                    if (characterArray.get(j) instanceof Survivor &&  characterArray.get(j).alive) {
+                    if (characterArray.get(j) instanceof Survivor && characterArray.get(j).alive) {
                         attack(characterArray.get(i), characterArray.get(j));
                     }
                 }
@@ -147,14 +147,13 @@ public class warHandler {
         }
     }
 
-    public void startWar(){
+    public void startWar() {
         //Check for remaining survivors or zombies in arraylist. If there are both then execute one round of combat
         boolean run = true;
-        while(run){
-            if(getNumSurvivors() == 0 || getNumZombies() == 0){
+        while (run) {
+            if (getNumSurvivors() == 0 || getNumZombies() == 0) {
                 run = false;
-            }
-            else{
+            } else {
                 survivorsFight();
                 zombiesFight();
             }
@@ -216,12 +215,12 @@ public class warHandler {
                 +numOfPlayersLeft("Tank") + " tanks)");
         startWar();
 
-        for(WarRecord result: gameResultRecord){
+        for (WarRecord result : gameResultRecord) {
             System.out.println(result);
         }
-        if(getNumSurvivors() > 0){
+        if (getNumSurvivors() > 0) {
             System.out.println("It seems " + getNumSurvivors() + " made it to safety.");
-        }else {
+        } else {
             System.out.println("None of the survivors made it.");
         }
 
